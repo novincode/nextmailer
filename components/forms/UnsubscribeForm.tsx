@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { unsubscribeFromNewsletter } from "@/lib/actions/unsubscribe"
-import { toast } from "sonner"
-import { Heart, Frown, ArrowLeft } from "lucide-react"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { unsubscribeFromNewsletter } from "@/lib/actions/unsubscribe";
+import { toast } from "sonner";
+import { Heart, Frown, ArrowLeft } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,12 +17,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const unsubscribeSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" })
+  email: z.string().email({ message: "Please enter a valid email address" }),
 });
 
 type UnsubscribeFormValues = z.infer<typeof unsubscribeSchema>;
@@ -31,39 +31,39 @@ interface UnsubscribeFormProps {
   description?: string;
 }
 
-export function UnsubscribeForm({ 
-  description = "We're sad to see you go, but we respect your decision."
+export function UnsubscribeForm({
+  description = "We're sad to see you go, but we respect your decision.",
 }: UnsubscribeFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isUnsubscribed, setIsUnsubscribed] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUnsubscribed, setIsUnsubscribed] = useState(false);
 
   const form = useForm<UnsubscribeFormValues>({
     resolver: zodResolver(unsubscribeSchema),
     defaultValues: {
       email: "",
     },
-  })
+  });
 
   async function onSubmit(data: UnsubscribeFormValues) {
-    setIsSubmitting(true)
-    
-    const formData = new FormData()
-    formData.append("email", data.email)
-    
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append("email", data.email);
+
     try {
-      const result = await unsubscribeFromNewsletter(formData)
-      
+      const result = await unsubscribeFromNewsletter(formData);
+
       if (result.success) {
         toast.success(result.message);
         setIsUnsubscribed(true);
-        form.reset()
+        form.reset();
       } else {
         toast.error(result.message);
       }
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -75,11 +75,16 @@ export function UnsubscribeForm({
         </div>
         <h3 className="text-xl font-medium">We'll Miss You</h3>
         <p className="text-muted-foreground">
-          You've been successfully unsubscribed from our mailing list.
-          We wish you all the best on your journey, and our door is always open if you wish to return.
+          You've been successfully unsubscribed from our mailing list. We wish
+          you all the best on your journey, and our door is always open if you
+          wish to return.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-          <Button variant="outline" onClick={() => setIsUnsubscribed(false)} className="mb-2 sm:mb-0">
+          <Button
+            variant="outline"
+            onClick={() => setIsUnsubscribed(false)}
+            className="mb-2 sm:mb-0"
+          >
             Change your mind?
           </Button>
           <Link href="/">
@@ -90,7 +95,7 @@ export function UnsubscribeForm({
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -99,7 +104,7 @@ export function UnsubscribeForm({
         <FormDescription className="text-center sm:text-left">
           {description}
         </FormDescription>
-        
+
         <FormField
           control={form.control}
           name="email"
@@ -113,7 +118,7 @@ export function UnsubscribeForm({
             </FormItem>
           )}
         />
-        
+
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="flex items-center gap-2">
@@ -129,5 +134,5 @@ export function UnsubscribeForm({
         </Button>
       </form>
     </Form>
-  )
+  );
 }

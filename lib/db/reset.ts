@@ -13,7 +13,7 @@ async function resetDatabase() {
     if (schemaExists.rows[0].exists) {
       await db.execute(sql`DROP SCHEMA public CASCADE;`);
     }
-    
+
     await db.execute(sql`CREATE SCHEMA public;`);
     console.log("🧹 Database has been reset successfully!");
   } catch (error) {

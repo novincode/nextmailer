@@ -121,12 +121,10 @@
   }
 }
 
-
 html {
   scroll-behavior: smooth;
-
 }
 
 .container {
-  @apply mx-auto
+  @apply mx-auto;
 }

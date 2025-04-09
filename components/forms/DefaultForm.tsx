@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { subscribeFormSchema, SubscribeFormValues } from "@/lib/formSchema"
-import { subscribeToNewsletter } from "@/lib/actions/subscribe"
-import { toast } from "sonner"
-import { Mail } from "lucide-react"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { subscribeFormSchema, SubscribeFormValues } from "@/lib/formSchema";
+import { subscribeToNewsletter } from "@/lib/actions/subscribe";
+import { toast } from "sonner";
+import { Mail } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,8 +17,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 interface DefaultFormProps {
   onFinish?: (data: any) => void;
@@ -26,12 +26,12 @@ interface DefaultFormProps {
   buttonText?: string;
 }
 
-export function DefaultForm({ 
-  onFinish, 
+export function DefaultForm({
+  onFinish,
   description = "Join our newsletter for the latest updates and news.",
-  buttonText = "Subscribe"
+  buttonText = "Subscribe",
 }: DefaultFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SubscribeFormValues>({
     resolver: zodResolver(subscribeFormSchema),
@@ -40,37 +40,38 @@ export function DefaultForm({
       firstName: "",
       lastName: "",
     },
-  })
+  });
 
   async function onSubmit(data: SubscribeFormValues) {
-    setIsSubmitting(true)
-    
-    const formData = new FormData()
-    formData.append("email", data.email)
-    if (data.firstName) formData.append("firstName", data.firstName)
-    if (data.lastName) formData.append("lastName", data.lastName)
-    
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append("email", data.email);
+    if (data.firstName) formData.append("firstName", data.firstName);
+    if (data.lastName) formData.append("lastName", data.lastName);
+
     try {
-      const result = await subscribeToNewsletter(formData)
-      
+      const result = await subscribeToNewsletter(formData);
+
       if (result.success) {
         toast.success(result.message);
-        form.reset()
-        
+        form.reset();
+
         // Always call onFinish if it exists, regardless of whether this is a new or existing subscriber
-        if (onFinish) onFinish({
-          ...result.data,
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName
-        })
+        if (onFinish)
+          onFinish({
+            ...result.data,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+          });
       } else {
         toast.error(result.message);
       }
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -80,7 +81,7 @@ export function DefaultForm({
         <FormDescription className="text-center sm:text-left">
           {description}
         </FormDescription>
-        
+
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
@@ -95,7 +96,7 @@ export function DefaultForm({
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="lastName"
@@ -110,7 +111,7 @@ export function DefaultForm({
             )}
           />
         </div>
-        
+
         <FormField
           control={form.control}
           name="email"
@@ -124,7 +125,7 @@ export function DefaultForm({
             </FormItem>
           )}
         />
-        
+
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="flex items-center gap-2">
@@ -140,5 +141,5 @@ export function DefaultForm({
         </Button>
       </form>
     </Form>
-  )
+  );
 }

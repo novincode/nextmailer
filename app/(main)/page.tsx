@@ -1,15 +1,14 @@
-import { DefaultForm } from "@/components/forms/DefaultForm"
-import { TopNav } from "@/components/layout/TopNav"
-import { Mail, Bell, Bookmark, CheckCircle, Sparkles } from "lucide-react"
-import { Toaster } from "sonner"
-import Link from "next/link"
+import { DefaultForm } from "@/components/forms/DefaultForm";
+import { TopNav } from "@/components/layout/TopNav";
+import { Mail, Bell, Bookmark, CheckCircle, Sparkles } from "lucide-react";
+import { Toaster } from "sonner";
+import Link from "next/link";
 
 export default function Home() {
-  const appName = process.env.NEXT_PUBLIC_APP_NAME || "Newsletter"
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "Newsletter";
 
   return (
     <div className="flex min-h-screen flex-col">
-
       <main className="flex-1">
         {/* Hero Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
@@ -21,8 +20,9 @@ export default function Home() {
                     Stay Connected with {appName}
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Join our community of forward-thinkers and stay updated with the latest insights,
-                    trends, and exclusive content delivered right to your inbox.
+                    Join our community of forward-thinkers and stay updated with
+                    the latest insights, trends, and exclusive content delivered
+                    right to your inbox.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -56,7 +56,10 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
+        <section
+          id="features"
+          className="w-full py-12 md:py-24 lg:py-32 bg-muted/50"
+        >
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -75,7 +78,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Timely Updates</h3>
                 <p className="text-center text-muted-foreground">
-                  Be the first to receive our latest content and important announcements.
+                  Be the first to receive our latest content and important
+                  announcements.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg p-4">
@@ -93,7 +97,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Community Connection</h3>
                 <p className="text-center text-muted-foreground">
-                  Join a community of like-minded individuals with similar interests.
+                  Join a community of like-minded individuals with similar
+                  interests.
                 </p>
               </div>
             </div>
@@ -108,8 +113,9 @@ export default function Home() {
                 Subscribe to Our Newsletter
               </h2>
               <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Join thousands of readers who get our weekly newsletter with valuable insights and updates.
-                We respect your privacy and will never share your information.
+                Join thousands of readers who get our weekly newsletter with
+                valuable insights and updates. We respect your privacy and will
+                never share your information.
               </p>
             </div>
             <div className="mx-auto w-full max-w-sm space-y-2 lg:max-w-none">
@@ -122,7 +128,10 @@ export default function Home() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
+        <section
+          id="faq"
+          className="w-full py-12 md:py-24 lg:py-32 bg-muted/50"
+        >
           <div className="container px-4 md:px-6">
             <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center space-y-4 text-center">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -134,36 +143,43 @@ export default function Home() {
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 md:grid-cols-2">
               <div className="space-y-2">
-                <h3 className="text-xl font-bold">How often will I receive newsletters?</h3>
+                <h3 className="text-xl font-bold">
+                  How often will I receive newsletters?
+                </h3>
                 <p className="text-muted-foreground">
-                  We send out newsletters on a weekly basis, ensuring you stay updated without overwhelming your inbox.
+                  We send out newsletters on a weekly basis, ensuring you stay
+                  updated without overwhelming your inbox.
                 </p>
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold">Can I unsubscribe at any time?</h3>
+                <h3 className="text-xl font-bold">
+                  Can I unsubscribe at any time?
+                </h3>
                 <p className="text-muted-foreground">
-                  Absolutely. Every email includes an unsubscribe link at the bottom, allowing you to opt-out with a single click.
+                  Absolutely. Every email includes an unsubscribe link at the
+                  bottom, allowing you to opt-out with a single click.
                 </p>
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold">What content can I expect?</h3>
+                <h3 className="text-xl font-bold">
+                  What content can I expect?
+                </h3>
                 <p className="text-muted-foreground">
-                  Our newsletters include the latest industry trends, useful tips, exclusive resources, and important announcements.
+                  Our newsletters include the latest industry trends, useful
+                  tips, exclusive resources, and important announcements.
                 </p>
               </div>
               <div className="space-y-2">
                 <h3 className="text-xl font-bold">Is my information secure?</h3>
                 <p className="text-muted-foreground">
-                  Yes, we value your privacy. Your information is stored securely and will never be shared with third parties.
+                  Yes, we value your privacy. Your information is stored
+                  securely and will never be shared with third parties.
                 </p>
               </div>
             </div>
           </div>
         </section>
       </main>
-
-     
-
     </div>
-  )
+  );
 }

@@ -6,9 +6,15 @@ import {
   AlertTriangle,
   XCircle,
   RefreshCw,
-  Mail
+  Mail,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export default function TermsPage() {
@@ -21,20 +27,18 @@ export default function TermsPage() {
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
           <FileText className="h-6 w-6 text-primary" />
         </div>
-        
+
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Terms of Service
         </h1>
-        
-        <p className="text-muted-foreground">
-          Last updated: {currentYear}
-        </p>
+
+        <p className="text-muted-foreground">Last updated: {currentYear}</p>
       </div>
 
       <div className="prose prose-stone dark:prose-invert max-w-none">
         <p className="text-lg">
-          Welcome to {appName}! These terms outline what to expect from us,
-          and what we expect from you. It's pretty straightforward stuff.
+          Welcome to {appName}! These terms outline what to expect from us, and
+          what we expect from you. It's pretty straightforward stuff.
         </p>
 
         <Card className="my-8">
@@ -46,13 +50,14 @@ export default function TermsPage() {
           </CardHeader>
           <CardContent>
             <p>
-              We provide a newsletter service that delivers useful content to your inbox.
-              Our goal is to share valuable information, insights, and occasional offers
-              that we think you'll find interesting.
+              We provide a newsletter service that delivers useful content to
+              your inbox. Our goal is to share valuable information, insights,
+              and occasional offers that we think you'll find interesting.
             </p>
             <p className="mt-3">
-              While we strive to be consistent, we don't guarantee a specific publishing schedule.
-              We publish when we have something worthwhile to share.
+              While we strive to be consistent, we don't guarantee a specific
+              publishing schedule. We publish when we have something worthwhile
+              to share.
             </p>
           </CardContent>
         </Card>
@@ -69,7 +74,10 @@ export default function TermsPage() {
             <ul className="ml-6 list-disc [&>li]:mt-2">
               <li>Provide accurate and complete contact information</li>
               <li>Keep your contact information updated</li>
-              <li>Use the unsubscribe link if you no longer wish to receive our content</li>
+              <li>
+                Use the unsubscribe link if you no longer wish to receive our
+                content
+              </li>
               <li>Don't attempt to abuse, spam, or manipulate our systems</li>
             </ul>
             <p className="mt-3">Pretty reasonable stuff, right?</p>
@@ -85,15 +93,18 @@ export default function TermsPage() {
           </CardHeader>
           <CardContent>
             <p>
-              The content we create is ours. This includes our newsletter, website content,
-              logos, designs, and any downloadable resources we provide.
+              The content we create is ours. This includes our newsletter,
+              website content, logos, designs, and any downloadable resources we
+              provide.
             </p>
             <p className="mt-3">
-              You can share our content with friends, colleagues, or on social media (we appreciate it!), 
-              but please give us credit. Don't republish our content as your own or sell it.
+              You can share our content with friends, colleagues, or on social
+              media (we appreciate it!), but please give us credit. Don't
+              republish our content as your own or sell it.
             </p>
             <p className="mt-3">
-              For personal use, feel free to print, save, or reference our content. We want our information to be useful to you!
+              For personal use, feel free to print, save, or reference our
+              content. We want our information to be useful to you!
             </p>
           </CardContent>
         </Card>
@@ -107,12 +118,14 @@ export default function TermsPage() {
           </CardHeader>
           <CardContent>
             <p>
-              We provide content for informational purposes. We're not responsible for how you apply this information.
-              Use your best judgment when implementing any advice or suggestions.
+              We provide content for informational purposes. We're not
+              responsible for how you apply this information. Use your best
+              judgment when implementing any advice or suggestions.
             </p>
             <p className="mt-3">
-              We do our best to provide accurate, useful content, but we're human. Occasionally there might be typos,
-              outdated information, or opinions you disagree with. That's all part of the conversation!
+              We do our best to provide accurate, useful content, but we're
+              human. Occasionally there might be typos, outdated information, or
+              opinions you disagree with. That's all part of the conversation!
             </p>
           </CardContent>
         </Card>
@@ -126,11 +139,13 @@ export default function TermsPage() {
           </CardHeader>
           <CardContent>
             <p>
-              You can unsubscribe at any time through the link in any of our emails or by contacting us directly.
+              You can unsubscribe at any time through the link in any of our
+              emails or by contacting us directly.
             </p>
             <p className="mt-3">
-              We reserve the right to terminate access in rare cases of abuse or violations of these terms.
-              But honestly, we'd rather have a conversation first!
+              We reserve the right to terminate access in rare cases of abuse or
+              violations of these terms. But honestly, we'd rather have a
+              conversation first!
             </p>
           </CardContent>
         </Card>
@@ -144,11 +159,12 @@ export default function TermsPage() {
           </CardHeader>
           <CardContent>
             <p>
-              We may update these terms occasionally. If we make significant changes,
-              we'll notify subscribers by email about the updates.
+              We may update these terms occasionally. If we make significant
+              changes, we'll notify subscribers by email about the updates.
             </p>
             <p className="mt-3">
-              Continued subscription after changes indicates your acceptance of the updated terms.
+              Continued subscription after changes indicates your acceptance of
+              the updated terms.
             </p>
           </CardContent>
         </Card>
@@ -162,8 +178,12 @@ export default function TermsPage() {
           </CardHeader>
           <CardContent>
             <p>
-              Questions about these terms? Need clarification? 
-              We're real people and we're happy to chat. Reach out to us at <span className="font-medium">hello@{appName.toLowerCase()}.com</span>.
+              Questions about these terms? Need clarification? We're real people
+              and we're happy to chat. Reach out to us at{" "}
+              <span className="font-medium">
+                hello@{appName.toLowerCase()}.com
+              </span>
+              .
             </p>
           </CardContent>
         </Card>
@@ -172,7 +192,8 @@ export default function TermsPage() {
 
         <div className="text-sm text-muted-foreground">
           <p>
-            By subscribing to our newsletter, you acknowledge that you've read and agree to these terms.
+            By subscribing to our newsletter, you acknowledge that you've read
+            and agree to these terms.
           </p>
           <p className="mt-3">
             Thanks for being part of our community. We're glad you're here!

@@ -1,12 +1,37 @@
 "use client";
 
-import React from 'react';
-import { Book, BookOpen, BookText, Download, ChevronRight, FileText, Video, FileImage, File } from 'lucide-react';
-import { DefaultForm } from '@/components/forms/DefaultForm';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { sendLeadMagnetEmail } from '@/lib/actions/sendEmail';
+import React from "react";
+import {
+  Book,
+  BookOpen,
+  BookText,
+  Download,
+  ChevronRight,
+  FileText,
+  Video,
+  FileImage,
+  File,
+} from "lucide-react";
+import { DefaultForm } from "@/components/forms/DefaultForm";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { sendLeadMagnetEmail } from "@/lib/actions/sendEmail";
 
-type LeadMagnetType = 'ebook' | 'pdf' | 'video' | 'image' | 'audio' | 'checklist' | 'template' | 'other';
+type LeadMagnetType =
+  | "ebook"
+  | "pdf"
+  | "video"
+  | "image"
+  | "audio"
+  | "checklist"
+  | "template"
+  | "other";
 
 interface LeadMagnetProps {
   title: string;
@@ -24,33 +49,97 @@ interface LeadMagnetProps {
 // Helper function to get icons based on lead magnet type
 const getIconsForType = (type: LeadMagnetType) => {
   switch (type) {
-    case 'ebook':
+    case "ebook":
       return [
-        { icon: BookOpen, title: 'Easy to Read', description: 'Formatted for your convenience' },
-        { icon: BookText, title: 'Practical Advice', description: 'Actionable strategies included' },
-        { icon: Download, title: 'Instant Access', description: 'Delivered straight to your inbox' },
-        { icon: Book, title: 'Expert Content', description: 'Written by industry professionals' }
+        {
+          icon: BookOpen,
+          title: "Easy to Read",
+          description: "Formatted for your convenience",
+        },
+        {
+          icon: BookText,
+          title: "Practical Advice",
+          description: "Actionable strategies included",
+        },
+        {
+          icon: Download,
+          title: "Instant Access",
+          description: "Delivered straight to your inbox",
+        },
+        {
+          icon: Book,
+          title: "Expert Content",
+          description: "Written by industry professionals",
+        },
       ];
-    case 'pdf':
+    case "pdf":
       return [
-        { icon: FileText, title: 'Detailed Guide', description: 'Comprehensive information' },
-        { icon: Download, title: 'Instant Access', description: 'Delivered straight to your inbox' },
-        { icon: File, title: 'Printable Format', description: 'Print for easy reference' },
-        { icon: BookText, title: 'Expert Content', description: 'Created by professionals' }
+        {
+          icon: FileText,
+          title: "Detailed Guide",
+          description: "Comprehensive information",
+        },
+        {
+          icon: Download,
+          title: "Instant Access",
+          description: "Delivered straight to your inbox",
+        },
+        {
+          icon: File,
+          title: "Printable Format",
+          description: "Print for easy reference",
+        },
+        {
+          icon: BookText,
+          title: "Expert Content",
+          description: "Created by professionals",
+        },
       ];
-    case 'video':
+    case "video":
       return [
-        { icon: Video, title: 'HD Quality', description: 'Clear visual instruction' },
-        { icon: Download, title: 'Instant Access', description: 'Available immediately' },
-        { icon: BookText, title: 'Expert Content', description: 'Professional instruction' },
-        { icon: File, title: 'Supplemental Materials', description: 'Additional resources included' }
+        {
+          icon: Video,
+          title: "HD Quality",
+          description: "Clear visual instruction",
+        },
+        {
+          icon: Download,
+          title: "Instant Access",
+          description: "Available immediately",
+        },
+        {
+          icon: BookText,
+          title: "Expert Content",
+          description: "Professional instruction",
+        },
+        {
+          icon: File,
+          title: "Supplemental Materials",
+          description: "Additional resources included",
+        },
       ];
     default:
       return [
-        { icon: File, title: 'Valuable Content', description: 'High-quality information' },
-        { icon: Download, title: 'Instant Access', description: 'Delivered straight to your inbox' },
-        { icon: FileText, title: 'Practical Resource', description: 'Ready to use right away' },
-        { icon: BookText, title: 'Expert Content', description: 'Created by professionals' }
+        {
+          icon: File,
+          title: "Valuable Content",
+          description: "High-quality information",
+        },
+        {
+          icon: Download,
+          title: "Instant Access",
+          description: "Delivered straight to your inbox",
+        },
+        {
+          icon: FileText,
+          title: "Practical Resource",
+          description: "Ready to use right away",
+        },
+        {
+          icon: BookText,
+          title: "Expert Content",
+          description: "Created by professionals",
+        },
       ];
   }
 };
@@ -63,11 +152,10 @@ export function LeadMagnet({
   coverImageUrl,
   formDescription = "Enter your details below to receive your free resource instantly.",
   downloadUrl = "https://example.com/resource.pdf",
-  type = 'other',
-  fileFormat = 'PDF',
+  type = "other",
+  fileFormat = "PDF",
   onSubscribe,
 }: LeadMagnetProps) {
-  
   const handleFormSubmission = async (data: any) => {
     // Always send the email regardless of whether it's a new or existing subscriber
     try {
@@ -77,9 +165,9 @@ export function LeadMagnet({
         title: contentTitle,
         downloadUrl,
         coverImageUrl,
-        buttonText: `Download ${type === 'ebook' ? 'Your eBook' : 'Now'}`,
+        buttonText: `Download ${type === "ebook" ? "Your eBook" : "Now"}`,
       });
-      
+
       // If there's a custom onSubscribe handler, call it
       if (onSubscribe) {
         onSubscribe(data);
@@ -88,15 +176,15 @@ export function LeadMagnet({
       console.error("Failed to send lead magnet email:", error);
     }
   };
-  
+
   const icons = getIconsForType(type);
-  
+
   return (
     <div className="grid gap-8 md:grid-cols-2 items-center max-w-6xl mx-auto p-6">
       <div className="space-y-6">
         <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
         <p className="text-muted-foreground">{description}</p>
-        
+
         <div className="grid grid-cols-2 gap-4">
           {icons.map((item, index) => (
             <Card key={index}>
@@ -110,7 +198,7 @@ export function LeadMagnet({
             </Card>
           ))}
         </div>
-        
+
         <div className="flex items-center gap-2 text-muted-foreground">
           <span className="text-xs">{fileFormat} format</span>
           <ChevronRight className="h-3 w-3" />
@@ -119,34 +207,37 @@ export function LeadMagnet({
           <span className="text-xs">Instant delivery</span>
         </div>
       </div>
-      
+
       <div>
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>Get "{contentTitle}"</CardTitle>
             <CardDescription>{formDescription}</CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             {coverImageUrl && (
               <div className="mx-auto w-40 aspect-[3/4] bg-secondary rounded-md overflow-hidden mb-4">
-                <img 
-                  src={coverImageUrl} 
-                  alt={contentTitle} 
+                <img
+                  src={coverImageUrl}
+                  alt={contentTitle}
                   className="w-full h-full object-cover"
                 />
               </div>
             )}
-            
-            <DefaultForm 
+
+            <DefaultForm
               buttonText={buttonText}
               description=""
               onFinish={handleFormSubmission}
             />
           </CardContent>
-          
+
           <CardFooter className="text-xs text-muted-foreground text-center">
-            <p>By subscribing, you agree to our privacy policy and allow us to send you emails. You can unsubscribe at any time.</p>
+            <p>
+              By subscribing, you agree to our privacy policy and allow us to
+              send you emails. You can unsubscribe at any time.
+            </p>
           </CardFooter>
         </Card>
       </div>
