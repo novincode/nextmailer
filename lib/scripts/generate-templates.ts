@@ -3,6 +3,7 @@ import path from "path";
 import { render } from "@react-email/render";
 import { glob } from "glob";
 import dotenv from "dotenv";
+import * as ts from "typescript";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -37,22 +38,30 @@ async function generateTemplates() {
       const templateName = path.basename(file, ".tsx");
       console.log(`⚙️ Processing template: ${templateName}`);
       
-      // Dynamic import the template
+      // Get the full file path
       const templatePath = path.join(process.cwd(), "components/templates", file);
+      
+      // Extract props from the template file
+      const propNames = await extractPropsFromTemplate(templatePath);
+      console.log(`📊 Found props:`, propNames);
+      
+      // Generate placeholder props based on extracted prop names
+      const placeholderProps = generatePlaceholderProps(propNames);
+      
+      // Dynamic import the template component
       const templateModule = await import(templatePath);
       const Template = templateModule.default;
       
-      // Use minimal default props - the real props will be passed at runtime
-      const minimalProps = getMinimalProps(templateName);
-      
-      // Render the template to get the HTML structure
-      const html = await render(Template(minimalProps), { pretty: false });
+      // Render the template to get the HTML structure with placeholders
+      const html = await render(Template(placeholderProps), { pretty: false });
       
       // Create the output file
       const outputPath = path.join(generatedDir, `${templateName}.ts`);
       await fs.writeFile(
         outputPath,
-        `// Generated from ${templateName}.tsx - DO NOT EDIT DIRECTLY\n\nexport const html = ${JSON.stringify(html)};\n`
+        `// Generated from ${templateName}.tsx - DO NOT EDIT DIRECTLY\n\n` +
+        `// Available placeholders: [${propNames.join(', ')}]\n` +
+        `export const html = ${JSON.stringify(html)};\n`
       );
       
       console.log(`✅ Generated: ${path.relative(process.cwd(), outputPath)}`);
@@ -68,32 +77,75 @@ async function generateTemplates() {
 }
 
 /**
- * Provide minimal props needed to render the template structure
- * These are just placeholders - actual props will be used at runtime
+ * Extract props from a template file by analyzing its TypeScript interface
  */
-function getMinimalProps(templateName: string) {
-  // Just provide the minimum required props to render the template
-  const baseProps = {
-    darkMode: false
-  };
+async function extractPropsFromTemplate(filePath: string): Promise<string[]> {
+  // Read the source file
+  const fileContent = await fs.readFile(filePath, 'utf-8');
   
-  // Add any absolutely required props to avoid template errors
-  if (templateName === 'LeadMagnetTemplate') {
-    return {
-      ...baseProps,
-      title: 'Template Preview',
-      downloadUrl: '#',
-    };
+  // Use TypeScript to parse the file
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    fileContent,
+    ts.ScriptTarget.Latest,
+    true
+  );
+  
+  const propNames: string[] = [];
+  
+  // Find the props interface (usually named *Props or ends with Props)
+  function visit(node: ts.Node) {
+    // Look for interfaces ending with "Props"
+    if (ts.isInterfaceDeclaration(node) && node.name.text.endsWith('Props')) {
+      // Extract prop names from the interface
+      node.members.forEach(member => {
+        if (ts.isPropertySignature(member) && member.name) {
+          // Get property name
+          let propName: string;
+          if (ts.isIdentifier(member.name)) {
+            propName = member.name.text;
+          } else if (ts.isStringLiteral(member.name)) {
+            propName = member.name.text;
+          } else {
+            return; // Skip if name is not a simple identifier
+          }
+          
+          // Add to our list of props
+          propNames.push(propName);
+        }
+      });
+    }
+    ts.forEachChild(node, visit);
   }
   
-  if (templateName === 'LayoutTemplate') {
-    return {
-      ...baseProps,
-      children: 'Template Content',
-    };
+  visit(sourceFile);
+  
+  // Always include darkMode for theme control
+  if (!propNames.includes('darkMode')) {
+    propNames.push('darkMode');
   }
   
-  return baseProps;
+  return propNames;
+}
+
+/**
+ * Generate placeholder props based on extracted prop names
+ */
+function generatePlaceholderProps(propNames: string[]): Record<string, any> {
+  const placeholderProps: Record<string, any> = {};
+  
+  // Create placeholders for each prop
+  propNames.forEach(propName => {
+    if (propName === 'darkMode') {
+      // Keep darkMode as boolean for correct rendering
+      placeholderProps[propName] = false;
+    } else {
+      // Generate placeholder tokens for other props
+      placeholderProps[propName] = `{{${propName}}}`;
+    }
+  });
+  
+  return placeholderProps;
 }
 
 // Run the generator
