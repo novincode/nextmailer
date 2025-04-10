@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { subscribeFormSchema, SubscribeFormValues } from "@/lib/formSchema";
 import { subscribeToNewsletter } from "@/lib/actions/subscribe";
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
+import Turnstile from 'react-turnstile';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,13 @@ export function DefaultForm({
   buttonText = "Subscribe",
 }: DefaultFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Use useEffect to mark component as mounted
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const form = useForm<SubscribeFormValues>({
     resolver: zodResolver(subscribeFormSchema),
@@ -43,12 +51,18 @@ export function DefaultForm({
   });
 
   async function onSubmit(data: SubscribeFormValues) {
+    if (!turnstileToken) {
+      toast.error("Please complete the CAPTCHA verification");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append("email", data.email);
     if (data.firstName) formData.append("firstName", data.firstName);
     if (data.lastName) formData.append("lastName", data.lastName);
+    formData.append("turnstileToken", turnstileToken);
 
     try {
       const result = await subscribeToNewsletter(formData);
@@ -56,8 +70,9 @@ export function DefaultForm({
       if (result.success) {
         toast.success(result.message);
         form.reset();
+        setTurnstileToken(null);
 
-        // Always call onFinish if it exists, regardless of whether this is a new or existing subscriber
+        // Always call onFinish if it exists
         if (onFinish)
           onFinish({
             ...result.data,
@@ -125,8 +140,21 @@ export function DefaultForm({
             </FormItem>
           )}
         />
+        
+        <div className="flex justify-center">
+          <Turnstile
+            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+            onVerify={setTurnstileToken}
+            theme="auto"
+          />
+        </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button 
+          type="submit" 
+          className="w-full" 
+          // Only apply the disabled state after the component has mounted on the client
+          disabled={isMounted ? (isSubmitting || !turnstileToken) : false}
+        >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-background border-r-transparent"></span>

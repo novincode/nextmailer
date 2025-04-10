@@ -5,9 +5,29 @@ import { eq } from "drizzle-orm";
 import { subscribers } from "@/lib/db/schema";
 import { subscribeFormSchema } from "@/lib/formSchema";
 import { revalidatePath } from "next/cache";
+import { verifyTurnstileToken } from "@/lib/utils/turnstile";
 
 export async function subscribeToNewsletter(formData: FormData) {
   try {
+    // Get turnstile token
+    const turnstileToken = formData.get("turnstileToken") as string;
+    
+    // Verify Turnstile token
+    if (!turnstileToken) {
+      return {
+        success: false,
+        message: "CAPTCHA verification failed. Please try again.",
+      };
+    }
+
+    const isValid = await verifyTurnstileToken(turnstileToken);
+    if (!isValid) {
+      return {
+        success: false,
+        message: "CAPTCHA verification failed. Please try again.",
+      };
+    }
+
     // Parse form data with zod schema
     const parsed = subscribeFormSchema.parse({
       email: formData.get("email"),

@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { subscribers, SubscriberStatus } from "@/lib/db/schema";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { verifyTurnstileToken } from "@/lib/utils/turnstile";
 
 // Simple schema for email validation
 const unsubscribeSchema = z.object({
@@ -13,6 +14,25 @@ const unsubscribeSchema = z.object({
 
 export async function unsubscribeFromNewsletter(formData: FormData) {
   try {
+    // Get turnstile token
+    const turnstileToken = formData.get("turnstileToken") as string;
+    
+    // Verify Turnstile token
+    if (!turnstileToken) {
+      return {
+        success: false,
+        message: "CAPTCHA verification failed. Please try again.",
+      };
+    }
+
+    const isValid = await verifyTurnstileToken(turnstileToken);
+    if (!isValid) {
+      return {
+        success: false,
+        message: "CAPTCHA verification failed. Please try again.",
+      };
+    }
+    
     // Parse the email from form data
     const email = formData.get("email") as string;
     const parsed = unsubscribeSchema.parse({ email });

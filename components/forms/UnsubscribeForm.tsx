@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { unsubscribeFromNewsletter } from "@/lib/actions/unsubscribe";
 import { toast } from "sonner";
 import { Heart, Frown, ArrowLeft } from "lucide-react";
+import Turnstile from 'react-turnstile';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +37,13 @@ export function UnsubscribeForm({
 }: UnsubscribeFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUnsubscribed, setIsUnsubscribed] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Use useEffect to mark component as mounted
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const form = useForm<UnsubscribeFormValues>({
     resolver: zodResolver(unsubscribeSchema),
@@ -45,10 +53,16 @@ export function UnsubscribeForm({
   });
 
   async function onSubmit(data: UnsubscribeFormValues) {
+    if (!turnstileToken) {
+      toast.error("Please complete the CAPTCHA verification");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append("email", data.email);
+    formData.append("turnstileToken", turnstileToken);
 
     try {
       const result = await unsubscribeFromNewsletter(formData);
@@ -57,6 +71,7 @@ export function UnsubscribeForm({
         toast.success(result.message);
         setIsUnsubscribed(true);
         form.reset();
+        setTurnstileToken(null);
       } else {
         toast.error(result.message);
       }
@@ -118,8 +133,21 @@ export function UnsubscribeForm({
             </FormItem>
           )}
         />
+        
+        <div className="flex justify-center">
+          <Turnstile
+            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+            onVerify={setTurnstileToken}
+            theme="auto"
+          />
+        </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button 
+          type="submit" 
+          className="w-full" 
+          // Only apply the disabled state after the component has mounted on the client
+          disabled={isMounted ? (isSubmitting || !turnstileToken) : false}
+        >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-background border-r-transparent"></span>
