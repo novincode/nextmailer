@@ -39,14 +39,30 @@ export interface SendLeadMagnetEmailParams extends BaseEmailParams {
   buttonText?: string;
 }
 
-export interface SendOtpEmailParams extends BaseEmailParams {
+// OTP email parameters
+export interface SendOtpEmailParams {
+  to: string;
   otpCode: string;
   recipientName?: string;
   title?: string;
   description?: string;
   buttonText?: string;
+  subscriberId?: string;
+  campaignId?: string;
+  darkMode?: boolean;
+  language?: 'en' | 'fa';
+  from?: string;
+  cc?: string | string[];
+  bcc?: string | string[];
+  replyTo?: string;
   expiryMinutes?: number;
-  language?: 'en' | 'fa'; // Language support
+  showFooter?: boolean;
+  showUnsubscribe?: boolean;
+  customFooter?: string;
+  previewText?: string;
+  logoUrl?: string;
+  footerText?: string;
+  unsubscribeUrl?: string;
 }
 
 // Core email sending function that prepares HTML and sends via API
@@ -252,11 +268,19 @@ export async function sendOtpEmail({
   subscriberId,
   campaignId,
   darkMode,
+  language = 'en',
   from,
   cc,
   bcc,
   replyTo,
   expiryMinutes,
+  showFooter = false,
+  showUnsubscribe = false,
+  customFooter,
+  previewText,
+  logoUrl,
+  footerText,
+  unsubscribeUrl,
 }: SendOtpEmailParams) {
   try {
     // If darkMode is not explicitly set, use the default from environment
@@ -271,16 +295,23 @@ export async function sendOtpEmail({
     // Send the email with rendered template
     return await sendMail({
       to,
-      subject: title || `Your verification code: ${otpCode}`,
-      templateName: "OtpLayout", // Direct template name, no conversion needed
+      subject: title || `کد بازیابی رمز عبور`,
+      templateName: "OtpLayout",
       templateProps: {
-        recipientName,
         otpCode,
         title,
         description,
         buttonText,
         darkMode: isDarkMode,
+        language,
         expiryMinutes,
+        showFooter,
+        showUnsubscribe,
+        customFooter,
+        previewText,
+        logoUrl,
+        footerText,
+        unsubscribeUrl,
       },
       from,
       cc,
@@ -294,7 +325,7 @@ export async function sendOtpEmail({
 }
 
 // Generic email parameters
-interface SendGenericEmailParams {
+export interface SendGenericEmailParams {
   to: string | string[];
   subject: string;
   content: string;

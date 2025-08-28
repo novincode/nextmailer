@@ -38,6 +38,13 @@ async function sendOtpHandler(request: NextRequest): Promise<NextResponse<OtpRes
       replyTo,
       expiryMinutes,
       language,
+      showFooter,
+      showUnsubscribe,
+      customFooter,
+      previewText,
+      logoUrl,
+      footerText,
+      unsubscribeUrl,
     } = requestData;
 
     // Check for required fields
@@ -65,6 +72,13 @@ async function sendOtpHandler(request: NextRequest): Promise<NextResponse<OtpRes
       replyTo,
       expiryMinutes,
       language,
+      showFooter,
+      showUnsubscribe,
+      customFooter,
+      previewText,
+      logoUrl,
+      footerText,
+      unsubscribeUrl,
     }) as { success: boolean; data?: any; error?: string };
 
     if (result.success) {

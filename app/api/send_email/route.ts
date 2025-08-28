@@ -1,27 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendGenericEmail } from "@/lib/actions/sendEmail";
 import { withApiGuard } from "@/lib/utils/api-guard";
+import type { SendGenericEmailParams } from "@/lib/actions/sendEmail";
 
 export const runtime = "edge";
 
-// Define the request body type for generic email
-interface SendGenericEmailRequest {
-  to: string | string[];
-  subject: string;
-  content: string;
-  previewText?: string;
-  heading?: string;
-  footerText?: string;
-  logoUrl?: string;
-  subscriberId?: string;
-  campaignId?: string;
-  darkMode?: boolean;
-  language?: 'en' | 'fa';
-  from?: string;
-  cc?: string | string[];
-  bcc?: string | string[];
-  replyTo?: string;
-}
+// Use the consolidated interface from sendEmail.ts
+type SendGenericEmailRequest = SendGenericEmailParams;
 
 // Define the response type
 interface GenericEmailResponse {

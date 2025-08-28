@@ -23,7 +23,10 @@ interface LayoutTemplateProps {
   unsubscribeUrl?: string;
   logoUrl?: string;
   darkMode?: boolean;
-  language?: 'en' | 'fa'; // Add language support for RTL
+  language?: 'en' | 'fa';
+  showUnsubscribe?: boolean; // Make unsubscribe optional
+  showFooter?: boolean; // Make footer optional
+  customFooter?: React.ReactNode; // Allow custom footer content
 }
 
 // Get default theme from environment
@@ -37,7 +40,10 @@ export const LayoutTemplate: React.FC<LayoutTemplateProps> = ({
   unsubscribeUrl,
   logoUrl,
   darkMode,
-  language = 'en', // Default to English
+  language = 'en',
+  showUnsubscribe = true, // Default to true for backward compatibility
+  showFooter = true, // Default to true for backward compatibility
+  customFooter,
 }) => {
   // If darkMode is not explicitly set, use the default from environment
   const isDarkMode = darkMode ?? defaultIsDarkMode;
@@ -98,21 +104,32 @@ export const LayoutTemplate: React.FC<LayoutTemplateProps> = ({
               {children}
             </Section>
 
-            <Hr className={`border-t ${colors.border} my-6`} />
-
-            <Section className={`text-center ${colors.text.muted} text-xs ${
-              isRTL ? 'font-fa' : ''
-            }`}>
-              <Text className={isRTL ? 'font-fa' : ''}>{footerText}</Text>
-              <Text>
-                <Link
-                  href={unsubscribeUrl}
-                  className={`${colors.link} underline ${isRTL ? 'font-fa' : ''}`}
-                >
-                  Unsubscribe
-                </Link>
-              </Text>
-            </Section>
+            {showFooter && (
+              <>
+                <Hr className={`border-t ${colors.border} my-6`} />
+                <Section className={`text-center ${colors.text.muted} text-xs ${
+                  isRTL ? 'font-fa' : ''
+                }`}>
+                  {customFooter ? (
+                    customFooter
+                  ) : (
+                    <>
+                      <Text className={isRTL ? 'font-fa' : ''}>{footerText}</Text>
+                      {showUnsubscribe && (
+                        <Text>
+                          <Link
+                            href={unsubscribeUrl}
+                            className={`${colors.link} underline ${isRTL ? 'font-fa' : ''}`}
+                          >
+                            Unsubscribe
+                          </Link>
+                        </Text>
+                      )}
+                    </>
+                  )}
+                </Section>
+              </>
+            )}
           </Container>
         </Body>
       </Tailwind>

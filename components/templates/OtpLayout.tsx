@@ -4,93 +4,88 @@ import LayoutTemplate from "./LayoutTemplate";
 import { getEmailTheme } from "./colors";
 
 interface OtpLayoutProps {
-  recipientName?: string;
   otpCode: string;
   title?: string;
   description?: string;
-  buttonText?: string;
-  darkMode?: boolean;
   expiryMinutes?: number;
-  language?: 'en' | 'fa'; // Add language support
+  darkMode?: boolean;
+  language?: 'en' | 'fa';
+  showFooter?: boolean;
+  showUnsubscribe?: boolean;
+  customFooter?: React.ReactNode;
+  previewText?: string;
+  logoUrl?: string;
+  footerText?: string;
+  unsubscribeUrl?: string;
 }
 
 // Get default theme from environment
 const defaultIsDarkMode = process.env.DEFAULT_MAIL_THEME === "dark";
 
-// Persian translations
-const persianTexts = {
-  greeting: (name?: string) => name ? `سلام ${name}،` : "سلام،",
-  defaultTitle: "کد تأیید شما",
-  defaultDescription: "لطفاً از کد تأیید زیر برای تکمیل عملیات خود استفاده کنید.",
-  codeExpiry: (minutes: number) => `این کد تا ${minutes} دقیقه دیگر معتبر است.`,
-  securityNote: "اگر این کد را درخواست نکرده‌اید، لطفاً این ایمیل را نادیده بگیرید.",
-  previewText: (code: string) => `کد تأیید شما: ${code}`,
-};
-
-// English translations
-const englishTexts = {
-  greeting: (name?: string) => name ? `Hi ${name},` : "Hi there,",
-  defaultTitle: "Your Verification Code",
-  defaultDescription: "Please use the verification code below to complete your action.",
-  codeExpiry: (minutes: number) => `This code will expire in ${minutes} minutes.`,
-  securityNote: "If you didn't request this code, please ignore this email.",
-  previewText: (code: string) => `Your verification code: ${code}`,
-};
-
 const OtpLayout: React.FC<OtpLayoutProps> = ({
-  recipientName = "",
   otpCode,
   title,
   description,
-  buttonText = "Verify Code",
-  darkMode,
   expiryMinutes = 10,
-  language = 'en', // Default to English
+  darkMode,
+  language = 'en',
+  showFooter = false, // Default to false for headless approach
+  showUnsubscribe = false, // Default to false for OTP emails
+  customFooter,
+  previewText,
+  logoUrl,
+  footerText,
+  unsubscribeUrl,
 }) => {
   // If darkMode is not explicitly set, use the default from environment
   const isDarkMode = darkMode ?? defaultIsDarkMode;
 
-  // Get the appropriate text based on language
-  const texts = language === 'fa' ? persianTexts : englishTexts;
+  // Determine if RTL layout is needed
+  const isRTL = language === 'fa';
 
-  const greeting = texts.greeting(recipientName);
-  const defaultTitleText = texts.defaultTitle;
-  const defaultDescriptionText = texts.defaultDescription;
-  const codeExpiryText = texts.codeExpiry(expiryMinutes);
-  const securityNoteText = texts.securityNote;
-  const previewTextValue = texts.previewText(otpCode);
+  // Set default preview text if not provided
+  const defaultPreviewText = previewText || `کد بازیابی رمز عبور`;
 
   // Get color theme from our centralized system
   const colors = getEmailTheme(isDarkMode);
 
   return (
     <LayoutTemplate
-      previewText={previewTextValue}
-      heading={title || defaultTitleText}
+      previewText={defaultPreviewText}
+      heading={title}
       darkMode={isDarkMode}
       language={language}
+      showFooter={showFooter}
+      showUnsubscribe={showUnsubscribe}
+      customFooter={customFooter}
+      logoUrl={logoUrl}
+      footerText={footerText}
+      unsubscribeUrl={unsubscribeUrl}
     >
-      <Text className={colors.text.secondary}>{greeting}</Text>
-
-      <Text className={colors.text.secondary}>
-        {description || defaultDescriptionText}
-      </Text>
+      {description && (
+        <Text className={`${colors.text.secondary} ${isRTL ? 'text-right font-fa' : 'text-left'} mb-6`}>
+          {description}
+        </Text>
+      )}
 
       <Section className="text-center my-8">
         <div
-          className={`inline-block px-6 py-4 rounded-lg ${colors.container} border-2 ${colors.border} font-mono text-2xl font-bold tracking-wider ${colors.text.heading}`}
+          className={`inline-block px-8 py-6 rounded-lg ${colors.container} border-2 ${colors.border} font-mono text-3xl font-bold tracking-wider ${colors.text.heading} ${
+            isRTL ? 'font-fa' : ''
+          }`}
         >
           {otpCode}
         </div>
       </Section>
 
-      <Text className={`${colors.text.secondary} text-center mb-6`}>
-        {codeExpiryText}
-      </Text>
-
-      <Text className={`${colors.text.secondary} text-center`}>
-        {securityNoteText}
-      </Text>
+      {expiryMinutes && (
+        <Text className={`${colors.text.secondary} text-center mb-6 ${isRTL ? 'font-fa' : ''}`}>
+          {isRTL
+            ? `این کد تا ${expiryMinutes} دقیقه دیگر معتبر است.`
+            : `This code will expire in ${expiryMinutes} minutes.`
+          }
+        </Text>
+      )}
     </LayoutTemplate>
   );
 };

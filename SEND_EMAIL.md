@@ -92,19 +92,21 @@ curl -X POST https://your-domain.com/api/send_email \
   }'
 ```
 
-### Multiple Recipients
+### Minimal Headless Email
 
 ```bash
 curl -X POST https://your-domain.com/api/send_email \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_GUARD_KEY" \
   -d '{
-    "to": ["user1@example.com", "user2@example.com"],
-    "subject": "Newsletter Update",
-    "content": "<p>Hello everyone!</p><p>We have exciting news to share...</p>",
-    "cc": "admin@example.com"
+    "to": "customer@example.com",
+    "subject": "Order Update",
+    "content": "<p>Your order has been shipped!</p><p>Tracking: 1Z999AA1234567890</p>",
+    "showFooter": false
   }'
 ```
+
+This creates a clean email with just your content, no footer or unsubscribe link.
 
 ### JavaScript/Node.js Example
 
@@ -249,11 +251,13 @@ The `content` field supports HTML formatting. You can use:
 
 The generic emails use the LayoutTemplate with:
 
+- **Headless Design**: Full control over footer, unsubscribe, and branding
 - **English Support**: Clean, professional design
-- **Persian/Farsi Support**: RTL layout with appropriate fonts
+- **Persian/Farsi Support**: RTL layout with proper font support
 - **Dark/Light Themes**: Automatic theme detection or manual override
 - **Mobile Responsive**: Optimized for all screen sizes
-- **Custom Branding**: Support for custom logos and styling
+- **Rich HTML Content**: Support for tables, images, links, and formatting
+- **Optional Elements**: Show/hide footer, unsubscribe link, and custom branding
 
 ## Rate Limits
 

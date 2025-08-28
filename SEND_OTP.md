@@ -36,14 +36,13 @@ Send a POST request with JSON body containing the following parameters:
 - **`description`** (string): Custom description text
 - **`buttonText`** (string): Text for the verification button (default: "Verify Code")
 - **`expiryMinutes`** (number): Minutes until code expires (default: 10)
-- **`language`** ('en' | 'fa'): Language for the email ('en' for English, 'fa' for Persian/Farsi)
-- **`darkMode`** (boolean): Use dark theme for the email
-- **`from`** (string): Custom sender email address
-- **`cc`** (string | string[]): CC recipients
-- **`bcc`** (string | string[]): BCC recipients
-- **`replyTo`** (string): Reply-to email address
-- **`subscriberId`** (string): Internal subscriber ID for tracking
-- **`campaignId`** (string): Campaign ID for analytics
+- **`showFooter`** (boolean): Show/hide footer section (default: false for headless)
+- **`showUnsubscribe`** (boolean): Show/hide unsubscribe link (default: false for OTP)
+- **`customFooter`** (string): Custom footer HTML content
+- **`previewText`** (string): Custom preview text for email clients
+- **`logoUrl`** (string): Custom logo URL
+- **`footerText`** (string): Custom footer text
+- **`unsubscribeUrl`** (string): Custom unsubscribe URL
 
 ## Request Examples
 
@@ -59,7 +58,7 @@ curl -X POST https://your-domain.com/api/send_otp \
   }'
 ```
 
-### Personalized OTP Email (English)
+### Minimal Headless OTP Email
 
 ```bash
 curl -X POST https://your-domain.com/api/send_otp \
@@ -68,14 +67,13 @@ curl -X POST https://your-domain.com/api/send_otp \
   -d '{
     "to": "user@example.com",
     "otpCode": "123456",
-    "recipientName": "John Doe",
-    "title": "Your Login Code",
-    "description": "Use this code to complete your login process",
-    "expiryMinutes": 5
+    "showFooter": false
   }'
 ```
 
-### Persian/Farsi OTP Email
+This creates a clean OTP email with just the code and expiry time, no greeting, footer, or unsubscribe link.
+
+### Persian/Farsi OTP Email (Headless)
 
 ```bash
 curl -X POST https://your-domain.com/api/send_otp \
@@ -84,15 +82,15 @@ curl -X POST https://your-domain.com/api/send_otp \
   -d '{
     "to": "user@example.com",
     "otpCode": "123456",
-    "recipientName": "جان دو",
+    "title": "کد بازیابی رمز عبور",
+    "description": "برای بازنشانی رمز عبور از این کد استفاده کنید",
     "language": "fa",
-    "title": "کد تأیید شما",
-    "description": "لطفاً از کد زیر برای تکمیل عملیات استفاده کنید",
-    "expiryMinutes": 10
+    "showFooter": false,
+    "previewText": "کد بازیابی رمز عبور"
   }'
 ```
 
-### JavaScript/Node.js Example
+### JavaScript/Node.js Example (Headless)
 
 ```javascript
 const response = await fetch('https://your-domain.com/api/send_otp', {
@@ -104,9 +102,11 @@ const response = await fetch('https://your-domain.com/api/send_otp', {
   body: JSON.stringify({
     to: 'user@example.com',
     otpCode: '123456',
-    recipientName: 'John Doe',
-    language: 'en',
-    expiryMinutes: 10
+    title: 'کد بازیابی رمز عبور',
+    description: 'برای بازنشانی رمز عبور از این کد استفاده کنید',
+    language: 'fa',
+    showFooter: false,
+    previewText: 'کد بازیابی رمز عبور'
   })
 });
 
@@ -222,10 +222,13 @@ echo json_encode($result, JSON_PRETTY_PRINT);
 
 The OTP emails use responsive HTML templates with:
 
+- **Headless Design**: Minimal, clean layout with optional footer and unsubscribe
 - **English Support**: Clean, professional design
-- **Persian/Farsi Support**: RTL layout with appropriate fonts
+- **Persian/Farsi Support**: RTL layout with proper font support
 - **Dark/Light Themes**: Automatic theme detection or manual override
 - **Mobile Responsive**: Optimized for all screen sizes
+- **Customizable Content**: Full control over title, description, and styling
+- **Optional Elements**: Show/hide footer, unsubscribe link, and custom content
 
 ## Rate Limits
 
