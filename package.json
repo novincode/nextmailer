@@ -1,5 +1,5 @@
 {
-  "name": "nextmailer",
+  "name": "bolbolmailer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "next lint",
     "pages:build": "pnpm next-on-pages",
     "preview": "pnpm pages:build && wrangler pages dev",
-    "deploy": "pnpm run generate-templates && pnpm pages:build && wrangler pages deploy",
+    "deploy": "pnpm run generate-templates && pnpm pages:build && npx cfman wrangler --account mehdihadipoor pages deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
     "db": "npx drizzle-kit generate && npx drizzle-kit push",
     "db:reset": "npx tsx lib/db/reset.ts",

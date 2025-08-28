@@ -23,6 +23,7 @@ interface LayoutTemplateProps {
   unsubscribeUrl?: string;
   logoUrl?: string;
   darkMode?: boolean;
+  language?: 'en' | 'fa'; // Add language support for RTL
 }
 
 // Get default theme from environment
@@ -36,9 +37,13 @@ export const LayoutTemplate: React.FC<LayoutTemplateProps> = ({
   unsubscribeUrl,
   logoUrl,
   darkMode,
+  language = 'en', // Default to English
 }) => {
   // If darkMode is not explicitly set, use the default from environment
   const isDarkMode = darkMode ?? defaultIsDarkMode;
+
+  // Determine if RTL layout is needed
+  const isRTL = language === 'fa';
 
   const appName = process.env.NEXT_PUBLIC_APP_NAME || "NextMailer";
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://nextmailer.com";
@@ -57,13 +62,15 @@ export const LayoutTemplate: React.FC<LayoutTemplateProps> = ({
   const colors = getEmailTheme(isDarkMode);
 
   return (
-    <Html>
+    <Html dir={isRTL ? 'rtl' : 'ltr'}>
       <Head />
       <Preview>{previewText}</Preview>
       <Tailwind>
-        <Body className={`${colors.background} font-sans`}>
+        <Body className={`${colors.background} font-sans ${isRTL ? 'font-fa' : ''}`}>
           <Container
-            className={`mx-auto my-8 max-w-[600px] rounded-lg ${colors.container} p-8 ${colors.shadow}`}
+            className={`mx-auto my-8 max-w-[600px] rounded-lg ${colors.container} p-8 ${colors.shadow} ${
+              isRTL ? 'text-right' : 'text-left'
+            }`}
           >
             <Section className="mb-6 text-center">
               {logoUrl && (
@@ -76,25 +83,31 @@ export const LayoutTemplate: React.FC<LayoutTemplateProps> = ({
               )}
               {heading && (
                 <Heading
-                  className={`text-2xl font-bold ${colors.text.heading} mb-0`}
+                  className={`text-2xl font-bold ${colors.text.heading} mb-0 ${
+                    isRTL ? 'font-fa' : ''
+                  }`}
                 >
                   {heading}
                 </Heading>
               )}
             </Section>
 
-            <Section className={`mb-6 ${colors.text.primary}`}>
+            <Section className={`mb-6 ${colors.text.primary} ${
+              isRTL ? 'text-right font-fa' : 'text-left'
+            }`}>
               {children}
             </Section>
 
             <Hr className={`border-t ${colors.border} my-6`} />
 
-            <Section className={`text-center ${colors.text.muted} text-xs`}>
-              <Text>{footerText}</Text>
+            <Section className={`text-center ${colors.text.muted} text-xs ${
+              isRTL ? 'font-fa' : ''
+            }`}>
+              <Text className={isRTL ? 'font-fa' : ''}>{footerText}</Text>
               <Text>
                 <Link
                   href={unsubscribeUrl}
-                  className={`${colors.link} underline`}
+                  className={`${colors.link} underline ${isRTL ? 'font-fa' : ''}`}
                 >
                   Unsubscribe
                 </Link>

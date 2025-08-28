@@ -8,39 +8,45 @@ import { loadEmailTemplate } from "@/lib/email/template-loader";
 // Get default theme from environment
 const defaultIsDarkMode = process.env.DEFAULT_MAIL_THEME === "dark";
 
-// Template-specific parameters
-interface SendStandardEmailParams {
+// Common email parameters shared across all email types
+export interface BaseEmailParams {
   to: string;
-  subject: string;
-  content: string; // Serializable content
-  previewText?: string;
-  heading?: string;
-  footerText?: string;
-  logoUrl?: string;
-  darkMode?: boolean;
   subscriberId?: string;
   campaignId?: string;
+  darkMode?: boolean;
   from?: string;
   cc?: string | string[];
   bcc?: string | string[];
   replyTo?: string;
 }
 
-interface SendLeadMagnetEmailParams {
-  to: string;
+// Template-specific parameters
+export interface SendStandardEmailParams extends BaseEmailParams {
+  subject: string;
+  content: string; // Serializable content
+  previewText?: string;
+  heading?: string;
+  footerText?: string;
+  logoUrl?: string;
+}
+
+export interface SendLeadMagnetEmailParams extends BaseEmailParams {
   recipientName?: string;
   title: string;
   description?: string;
   downloadUrl: string;
   coverImageUrl?: string;
   buttonText?: string;
-  subscriberId?: string;
-  campaignId?: string;
-  darkMode?: boolean;
-  from?: string;
-  cc?: string | string[];
-  bcc?: string | string[];
-  replyTo?: string;
+}
+
+export interface SendOtpEmailParams extends BaseEmailParams {
+  otpCode: string;
+  recipientName?: string;
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  expiryMinutes?: number;
+  language?: 'en' | 'fa'; // Language support
 }
 
 // Core email sending function that prepares HTML and sends via API
@@ -231,6 +237,131 @@ export async function sendLeadMagnetEmail({
     });
   } catch (error) {
     console.error("Error in sendLeadMagnetEmail:", error);
+    return { success: false, error: String(error) };
+  }
+}
+
+// OTP email
+export async function sendOtpEmail({
+  to,
+  otpCode,
+  recipientName,
+  title,
+  description,
+  buttonText,
+  subscriberId,
+  campaignId,
+  darkMode,
+  from,
+  cc,
+  bcc,
+  replyTo,
+  expiryMinutes,
+}: SendOtpEmailParams) {
+  try {
+    // If darkMode is not explicitly set, use the default from environment
+    const isDarkMode = darkMode ?? defaultIsDarkMode;
+
+    // If subscriberId is not provided, try to find by email
+    let subscriberIdToUse = subscriberId;
+    if (!subscriberIdToUse) {
+      subscriberIdToUse = await getSubscriberIdByEmail(to);
+    }
+
+    // Send the email with rendered template
+    return await sendMail({
+      to,
+      subject: title || `Your verification code: ${otpCode}`,
+      templateName: "OtpLayout", // Direct template name, no conversion needed
+      templateProps: {
+        recipientName,
+        otpCode,
+        title,
+        description,
+        buttonText,
+        darkMode: isDarkMode,
+        expiryMinutes,
+      },
+      from,
+      cc,
+      bcc,
+      replyTo,
+    });
+  } catch (error) {
+    console.error("Error in sendOtpEmail:", error);
+    return { success: false, error: String(error) };
+  }
+}
+
+// Generic email parameters
+interface SendGenericEmailParams {
+  to: string | string[];
+  subject: string;
+  content: string;
+  previewText?: string;
+  heading?: string;
+  footerText?: string;
+  logoUrl?: string;
+  subscriberId?: string;
+  campaignId?: string;
+  darkMode?: boolean;
+  language?: 'en' | 'fa';
+  from?: string;
+  cc?: string | string[];
+  bcc?: string | string[];
+  replyTo?: string;
+}
+
+// Generic email using LayoutTemplate
+export async function sendGenericEmail({
+  to,
+  subject,
+  content,
+  previewText,
+  heading,
+  footerText,
+  logoUrl,
+  subscriberId,
+  campaignId,
+  darkMode,
+  language = 'en',
+  from,
+  cc,
+  bcc,
+  replyTo,
+}: SendGenericEmailParams) {
+  try {
+    // If darkMode is not explicitly set, use the default from environment
+    const isDarkMode = darkMode ?? defaultIsDarkMode;
+
+    // If subscriberId is not provided and 'to' is a single email, try to find by email
+    let subscriberIdToUse = subscriberId;
+    if (!subscriberIdToUse && typeof to === 'string') {
+      subscriberIdToUse = await getSubscriberIdByEmail(to);
+    }
+
+    // Send the email with rendered template
+    return await sendMail({
+      to,
+      subject,
+      templateName: "LayoutTemplate",
+      templateProps: {
+        content,
+        previewText,
+        heading,
+        footerText,
+        logoUrl,
+        darkMode: isDarkMode,
+        language,
+        children: content, // Required for LayoutTemplate
+      },
+      from,
+      cc,
+      bcc,
+      replyTo,
+    });
+  } catch (error) {
+    console.error("Error in sendGenericEmail:", error);
     return { success: false, error: String(error) };
   }
 }
